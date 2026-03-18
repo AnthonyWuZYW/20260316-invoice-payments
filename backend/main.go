@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		log.Printf("Could not read seed-data.json: %v", err)
 	} else {
-		// 3. Seed the Database
+		// Seed the Database
 		err = SeedDatabase(string(content))
 		if err != nil {
 			log.Printf("Seeding failed: %v", err)

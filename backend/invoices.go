@@ -9,13 +9,12 @@ import (
 )
 
 type InvoiceRequest struct {
-	CustomerID int     `json:"customer_id"`
-	Name       string  `json:"name"`
-	Amount     float64 `json:"amount"`
-	Currency   string  `json:"currency"`
-	IssueDate  string  `json:"issued_at"`
-	DueDate    string  `json:"due_at"`
-	Status     string  `json:"status"`
+	Name      string  `json:"name"`
+	Amount    float64 `json:"amount"`
+	Currency  string  `json:"currency"`
+	IssueDate string  `json:"issued_at"`
+	DueDate   string  `json:"due_at"`
+	Status    string  `json:"status"`
 }
 
 type InvoiceRecord struct {
@@ -60,6 +59,7 @@ func handleCreateInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(req)
 	// Create the Invoice
 	invoiceID, err := createInvoice(int(customerID), req.Amount, req.Currency, req.IssueDate, req.DueDate)
 	if err != nil {
@@ -78,7 +78,7 @@ func handleCreateInvoice(w http.ResponseWriter, r *http.Request) {
 // handleGetInvoices handles GET /api/invoices and GET /api/invoices/{id}
 func handleGetInvoices(w http.ResponseWriter, r *http.Request) {
 	// Extract the ID from the URL (e.g., "/api/invoices/1")
-	// We strip the prefix to see if there is an ID at the end
+	// Strip the prefix to see if there is an ID at the end
 	idStr := r.URL.Path[len("/api/invoices/"):]
 
 	// ID provided: Search by ID
@@ -99,7 +99,7 @@ func handleGetInvoices(w http.ResponseWriter, r *http.Request) {
 
 // Insert a new Invoice
 func createInvoice(customerID int, amount float64, currency string, issueAt string, dueAt string) (int64, error) {
-	query := `INSERT INTO invoices (customer_id, amount, currency, issue_at, due_at, status) 
+	query := `INSERT INTO invoices (customer_id, amount, currency, issued_at, due_at, status) 
               VALUES (?, ?, ?, ?, ?, 'PENDING')`
 	result, err := db.Exec(query, customerID, amount, currency, issueAt, dueAt)
 	if err != nil {

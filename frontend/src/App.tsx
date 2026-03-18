@@ -25,7 +25,6 @@ function App() {
 
 
   const [invoiceFormData, setInvoiceForm] = useState({ 
-    customerId: '', 
     name: '',
     amount: '', 
     currency: 'USD', 
@@ -51,15 +50,14 @@ function App() {
   {/* Send Invoice Logic */}
   const handleInvoiceConfirm = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/invoices", {
+      const response = await fetch("http://localhost:8080/api/invoices/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customer_id: Number(invoiceFormData.customerId),
           name: invoiceFormData.name,
           amount: Number(invoiceFormData.amount),
           currency: invoiceFormData.currency,
-          issue_at: invoiceFormData.issueDate,
+          issued_at: invoiceFormData.issueDate,
           due_at: invoiceFormData.dueDate,
           status: invoiceFormData.status,
         }),
@@ -68,7 +66,7 @@ function App() {
       if (response.ok) {
         alert("Invoice Created!");
         setInvoiceModal(false);
-        setInvoiceForm({ customerId: '', name: '', amount: '', currency: 'USD', issueDate: '', dueDate: '', status: 'PENDING' });
+        setInvoiceForm({ name: '', amount: '', currency: 'USD', issueDate: '', dueDate: '', status: 'PENDING' });
       }
     } catch (error) {
       alert("Error connecting to backend");
@@ -138,9 +136,6 @@ function App() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>New Invoice</h2>
-            <label>Customer ID</label>
-            <input type="number" onChange={(e) => setInvoiceForm({...invoiceFormData, customerId: e.target.value})} />
-
             <label>Name</label>
             <input type="string" onChange={(e) => setInvoiceForm({...invoiceFormData, name: e.target.value})} />
             
@@ -186,7 +181,10 @@ function App() {
         </div>
       )}
 
+      {/* Search for Invoice Modal */}
       <div className="search-section" style={{ margin: '30px 0', textAlign: 'center' }}>
+        <h2 className="search-bar-title">Invoice Lookup</h2>
+
         <input 
           type="number" 
           placeholder="Enter Invoice ID to view details..." 
@@ -202,13 +200,18 @@ function App() {
         </button>
       </div>
 
+      {/* Invoice Search Result Modal */}
       {selectedInvoice && (
       <div className="modal-overlay">
         <div className="modal-content" style={{ textAlign: 'left', minWidth: '400px' }}>
           <h2>Invoice Details</h2>
           <p><strong>ID:</strong> {selectedInvoice.id}</p>
           <p><strong>Customer:</strong> {selectedInvoice.name}</p>
-          <p><strong>Total:</strong> {selectedInvoice.currency} {selectedInvoice.amount}</p>
+          <p>
+            <strong>Total: </strong> 
+              {selectedInvoice.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <strong> </strong> {selectedInvoice.currency}  
+          </p>
           <p><strong>Status:</strong> {selectedInvoice.status}</p>
 
           <hr />
