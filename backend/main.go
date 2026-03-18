@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -23,9 +24,26 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
-	// Set the port
+	// Initalize Database
+	fmt.Println("Initalize Database")
+	db = initDB()
+	defer db.Close()
+
+	content, err := os.ReadFile("seed-data.json")
+	if err != nil {
+		log.Printf("Could not read seed-data.json: %v", err)
+	} else {
+		// 3. Seed the Database
+		err = SeedDatabase(string(content))
+		if err != nil {
+			log.Printf("Seeding failed: %v", err)
+		}
+	}
+
+	// Set the Mux
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/payments", paymentHandler)
+	mux.HandleFunc("/api/invoices/", InvoicesDispatcher)
 
 	// Server Configuration
 	server := &http.Server{
@@ -35,14 +53,9 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	// Initalize Database
-	fmt.Println("Initalize Database")
-	db = initDB()
-	defer db.Close()
-
 	fmt.Println("Server listening on http://localhost:8080")
 	// Start Server
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal("Server failed: ", err)
 	}

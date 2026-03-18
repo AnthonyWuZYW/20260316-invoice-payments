@@ -12,6 +12,8 @@
 }
 
 .modal-content {
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   padding: 40px;
   border-radius: 8px;
@@ -19,4 +21,16 @@
   text-align: center;
   box-shadow: var(--shadow); 
   min-width: 300px;
+}
+
+.modal-content label {
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;       
+  margin-bottom: -2px;    
+}
+
+.modal-content button:hover {
+  filter: brightness(0.9);
+  transition: 0.2s;
 }
