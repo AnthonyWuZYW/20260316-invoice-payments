@@ -42,7 +42,6 @@ func main() {
 
 	// Set the Mux
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/payments", paymentDispatcher)
 	mux.HandleFunc("/api/invoices/", invoicesDispatcher)
 	mux.HandleFunc("/api/customers/", CustomerDispatcher)
 

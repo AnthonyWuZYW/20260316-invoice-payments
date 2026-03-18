@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type InvoiceRequest struct {
@@ -34,6 +35,11 @@ type InvoiceDetail struct {
 }
 
 func invoicesDispatcher(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/payments") {
+		paymentDispatcher(w, r)
+		return
+	}
+
 	switch r.Method {
 	case http.MethodPost:
 		handleCreateInvoice(w, r)
